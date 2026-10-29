@@ -1,0 +1,7 @@
+.env
+node_modules/
+.python-version
+collected/
+verified_bug/
+unverified/
+repository.txt

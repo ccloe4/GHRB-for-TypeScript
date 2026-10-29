@@ -1,0 +1,8 @@
+{
+    "typeorm": {
+        "build": "npm",
+        "wrapper": false,
+        "node": "18",
+        "extra": {}
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "typeorm": {
+    "owner": "typeorm",
+    "number_of_bugs": 10,
+    "commit_db": "commit_db/typeorm.csv",
+    "repo_path": "root/framework/repos/typeorm",
+    "requirements": {
+      "build": "npm",
+      "node": "18"
+    }
+  },
+  "cal.com": {
+    "owner": "calcom",
+    "number_of_bugs": 2,
+    "commit_db": "commit_db/cal.com.csv",
+    "repo_path": "collected/raw_repos/cal.com",
+    "requirements": {
+      "build": "yarn",
+      "node": "18"
+    }
+  }
+}

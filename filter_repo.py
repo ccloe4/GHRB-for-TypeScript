@@ -56,7 +56,7 @@ def collect_repo_data (file):
 
         error = 0
         done = False
-        while done == False and error < 20:
+        while not done and error < 20:
             try:
                 repo_result = client.execute(fetch_specific, variable_values=param)
                 repo_list[name] = repo_result
@@ -91,7 +91,7 @@ def filter_language_repo ():
     return filtered_repos
 
 '''
-Filter out PRs that are not mainly in Java
+Filter out PRs that are not mainly in TypeScript
 '''
 def filter_pl_repo (input_repos):
     output_repos = {}
@@ -100,7 +100,7 @@ def filter_pl_repo (input_repos):
         language_data = repo_data["languages"]['edges']
         total_size = repo_data["languages"]["totalSize"]
         for language in language_data:
-            if language['node']['name'] == "Java" and language['size'] / total_size > 0.9:
+            if language['node']['name'] == "TypeScript" and language['size'] / total_size > 0.9:
                 output_repos[repo] = repo_data
                 break
 

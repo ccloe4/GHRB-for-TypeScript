@@ -172,13 +172,10 @@ def filter_no_test_PR (filtered_pr):
 
     def contains_test_in_paths(paths):
         for path in paths:
-            if 'test' in path.lower() and path.endswith('.java'):
+            if 'test' in path.lower() and path.endswith('.ts'):
                 return True
 
-            if 'assert' in path.lower() and path.endswith('.java'):
-                return True 
-
-            if 'should' in path.lower() and path.endswith('.java'):
+            if path.endswith('.test.ts') or path.endswith('.spec.ts'):
                 return True
             
         return False
@@ -218,7 +215,9 @@ def filter_language_PR (filtered_pr):
     filtered_lang_pr = defaultdict(list)
     
     def find_lang(text):
-        if text is None:
+        # 테스트: 길이가 짧은 경우 분석이 부정확해서 영어로 간주함
+        # if text is None or len(text) < 30:
+        if text is None: 
             return True
         lang, _ = langid.classify(text)
         if lang == 'en':
@@ -256,7 +255,8 @@ def filter_main_branch_PR (filtered_pr):
 
             bug_id = f'{repo_name}-{pr_data["number"]}'
 
-            changed_test_files = [node['node']['path'] for node in pr_data['files']['edges'] if 'test' in node['node']['path'].lower() and node['node']['path'].endswith('.java')]
+            changed_test_files = [node['node']['path'] for node in pr_data['files']['edges'] if ('test' in node['node']['path'].lower() and node['node']['path'].endswith('.ts')) or (node['node']['path'].endswith('.spec.ts') or node['node']['path'].endswith('.test.ts'))]
+
             closing_issue = pr_data['closingIssuesReferences']['edges'][0]['node']
             
             merge_commit_url = None
@@ -352,7 +352,7 @@ def filter_test_diff_PR (filtered_pr):
                     index = test_dir.index('test')
                     test_dir = "/".join(test_dir[:index+2])
                 else:
-                    test_dir = 'src/test/java'
+                    test_dir = 'src/test'
 
             selected_buggy_commit = None
             diff = None
@@ -441,14 +441,14 @@ def fetch_prod_diff ():
                     index = test_dir.index('test')
                     test_dir = "/".join(test_dir[:index+2])
                 else:
-                    test_dir = 'src/test/java'
+                    test_dir = 'src/test'
 
             selected_buggy_commit = None
             diff = None
 
             for buggy_commit in buggy_commits:
                 
-                p = subprocess.run(shlex.split(f"git diff {buggy_commit} {merge_commit} -- '*.java' ':!{test_dir}/*' ':!*/test/*'")
+                p = subprocess.run(shlex.split(f"git diff {buggy_commit} {merge_commit} -- '*.ts' ':!{test_dir}/*' ':!*/test/*'")
                                 , stdout=subprocess.PIPE, stderr=subprocess.PIPE
                                 , cwd=repo_path)
                 
@@ -467,7 +467,7 @@ def fetch_prod_diff ():
                                            stderr=subprocess.PIPE, stdout=subprocess.PIPE,
                                            cwd=repo_path)
                     
-                    p = subprocess.run(shlex.split(f"git diff {buggy_commit} {merge_commit} -- '*.java' ':!{test_dir}/*' ':!*/test/*'"),
+                    p = subprocess.run(shlex.split(f"git diff {buggy_commit} {merge_commit} -- '*.ts' ':!{test_dir}/*' ':!*/test/*'"),
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                        cwd=repo_path)
 
